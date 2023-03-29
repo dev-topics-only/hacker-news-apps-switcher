@@ -9,7 +9,7 @@ const ctx = await esbuild.context({
   },
   alias: {
     "data-text:./style.scss": "src/contents/style.scss",
-    "browser-extension-storage": "browser-extension-storage/userscript",
+    "~storage/chrome": "src/storage/userscript.ts",
   },
   loader: {
     ".scss": "text",
@@ -31,9 +31,8 @@ console.log("Hit CTRL-C to stop the server")
 // new EventSource("http://localhost:8000/esbuild").addEventListener("change", () => location.reload())
 
 console.log(`\nAdd this code to Tampermonkey
-
 // ==UserScript==
-// @name         localhost:${port}
+// @name         local
 // @namespace    http://tampermonkey.net/
 // @version      0.0.1
 // @description  try to take over the world!
@@ -68,6 +67,4 @@ console.log(`\nAdd this code to Tampermonkey
   );
 })();
 // END
-
-
 `)

@@ -1,33 +1,13 @@
-# Browser Extension Starter and Userscript Starter
+# Extension Starter
 
 ## Features
 
-- One codebase for Chrome extesions, Firefox addons and Userscripts
-- [Plasmo](https://www.plasmo.com/) - The Browser Extension Framework
-- [esbuild](https://esbuild.github.io/) - Bundler
-- React
+- One source code for Chrome extesions, Firefox addons, Userscripts
+- plasmo
+- esbuild
 - TypeScript
-- [Prettier](https://github.com/prettier/prettier) - Code Formatter
-- [XO](https://github.com/xojs/xo) - JavaScript/TypeScript linter
-
-## Showcases
-
-- [UTags - Add usertags to links](https://github.com/utags/utags) - Allow users to add custom tags to links.
-- [Hacker News Apps Switcher](https://github.com/dev-topics-only/hacker-news-apps-switcher) - Open Hacker News links on the favorite apps
-
-## How To Make A New Extension
-
-1. Fork [this starter repo](https://github.com/PipecraftNet/browser-extension-starter), and rename repo to your extension name
-
-2. Clone your repo
-
-3. Install dependencies
-
-```bash
-pnpm install
-# or
-npm install
-```
+- Style with Prettier
+- Lint with xo
 
 ## Getting Started
 
@@ -63,7 +43,7 @@ The easiest way to deploy your Plasmo extension is to use the built-in [bpp](htt
 
 ## License
 
-Copyright (c) 2023 [Pipecraft](https://www.pipecraft.net). Licensed under the [MIT License](LICENSE).
+Copyright (c) 2023 [Pipecraft](https://www.pipecraft.net). Licensed under the [MIT License](https://github.com/utags/utags/blob/main/LICENSE).
 
 ## >\_
 

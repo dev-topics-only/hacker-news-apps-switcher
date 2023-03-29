@@ -1,16 +1,12 @@
 {
-  "name": "my-extension",
-  "displayName": "My-Extension",
-  "displayName:zh-CN": "我的扩展",
-  "version": "0.1.0",
+  "name": "hacker-news-apps-switcher",
+  "displayName": "Hacker News Apps Switcher",
+  "displayName:zh-CN": "Hacker News 网站切换器",
+  "version": "0.0.1",
   "description": "try to take over the world!",
   "description:zh-CN": "掌控一切！",
-  "author": "You",
+  "author": "Pipecraft",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/PipecraftNet/browser-extension-starter/issues"
-  },
-  "homepage": "https://github.com/PipecraftNet/browser-extension-starter#readme",
   "scripts": {
     "p": "prettier --write .",
     "lint": "run-s lint:*",
@@ -29,23 +25,23 @@
     "package:firefox": "plasmo package --target=firefox-mv2"
   },
   "dependencies": {
-    "browser-extension-storage": "^0.0.2",
+    "@plasmohq/storage": "^1.2.2",
     "browser-extension-utils": "^0.0.6",
-    "plasmo": "^0.67.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "plasmo": "0.66.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
-    "@plasmohq/prettier-plugin-sort-imports": "^3.6.3",
-    "@types/chrome": "^0.0.226",
-    "@types/node": "^18.15.11",
-    "@types/react": "^18.0.31",
-    "@types/react-dom": "^18.0.11",
-    "esbuild": "^0.17.14",
-    "fs-extra": "^11.1.1",
+    "@plasmohq/prettier-plugin-sort-imports": "3.6.3",
+    "@types/chrome": "0.0.219",
+    "@types/node": "18.14.6",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "esbuild": "^0.17.11",
+    "fs-extra": "^11.1.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.7",
-    "typescript": "^4.9.5",
+    "prettier": "2.8.4",
+    "typescript": "4.9.5",
     "xo": "^0.53.1"
   },
   "manifest": {
@@ -53,7 +49,6 @@
       "https://*/*"
     ],
     "permissions": [
-      "storage",
       "tabs"
     ]
   },

@@ -1,13 +1,12 @@
 // ==UserScript==
 // @name         {name}
 // @name:zh-CN   {name:zh-CN}
-// @namespace    https://www.pipecraft.net/
-// @homepage     {homepage}
-// @supportURL   {bugs.url}
+// @namespace    https://utags.pipecraft.net/
+// @homepage     https://utags.pipecraft.net/
 // @version      {version}
 // @description  {description}
 // @description:zh-CN {description:zh-CN}
-// @icon         https://www.tampermonkey.net/favicon.ico
+// @icon         https://utags.pipecraft.net/favicon.png
 // @author       {author}
 // @license      {license}
 // @match        https://*/*
