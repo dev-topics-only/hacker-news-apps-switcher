@@ -1,0 +1,264 @@
+// ==UserScript==
+// @name         Hacker News Apps Switcher
+// @name:zh-CN   Hacker News 网站切换器
+// @namespace    https://www.pipecraft.net/
+// @homepage     https://github.com/dev-topics-only/hacker-news-apps-switcher#readme
+// @supportURL   https://github.com/dev-topics-only/hacker-news-apps-switcher/issues
+// @version      0.0.2
+// @description  Open Hacker News links on the favorite apps
+// @description:zh-CN 选择其他 HN 网站打开 Hacker News 链接
+// @icon         https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
+// @author       Pipecraft
+// @license      MIT
+// @match        https://*/*
+// @match        http://*/*
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_addValueChangeListener
+// ==/UserScript==
+//
+
+;(() => {
+  "use strict"
+  var doc = document
+  var toCamelCase = function (text) {
+    return text.replace(/^([A-Z])|[\s-_](\w)/g, function (match, p1, p2) {
+      if (p2) return p2.toUpperCase()
+      return p1.toLowerCase()
+    })
+  }
+  var $ = (element, selectors) =>
+    typeof element === "object"
+      ? element.querySelector(selectors)
+      : doc.querySelector(element)
+  var $$ = (element, selectors) =>
+    typeof element === "object"
+      ? [...element.querySelectorAll(selectors)]
+      : [...doc.querySelectorAll(element)]
+  var createElement = doc.createElement.bind(doc)
+  var addEventListener = (element, type, listener) => {
+    if (typeof type === "object") {
+      for (const type1 in type) {
+        if (Object.hasOwn(type, type1)) {
+          element.addEventListener(type1, type[type1])
+        }
+      }
+    } else if (typeof type === "string" && typeof listener === "function") {
+      element.addEventListener(type, listener)
+    }
+  }
+  var getAttribute = (element, name) => element.getAttribute(name)
+  var setAttribute = (element, name, value) => element.setAttribute(name, value)
+  var setStyle = (element, values, overwrite) => {
+    const style = element.style
+    if (overwrite) {
+      if (typeof values === "string") {
+        style.cssText = values
+        return
+      }
+      style.cssText = ""
+    }
+    if (typeof values === "string") {
+      values = toStyleKeyValues(values)
+    }
+    for (const key in values) {
+      if (Object.hasOwn(values, key)) {
+        style[key] = values[key].replace("!important", "")
+      }
+    }
+  }
+  var toStyleKeyValues = (styleText) => {
+    const result = {}
+    const keyValues = styleText.split(/\s*;\s*/)
+    for (const keyValue of keyValues) {
+      const kv = keyValue.split(/\s*:\s*/)
+      const key = toCamelCase(kv[0])
+      if (key) {
+        result[key] = kv[1]
+      }
+    }
+    return result
+  }
+  var toStyleMap = (styleText) => {
+    styleText = noStyleSpace(styleText)
+    const map = {}
+    const keyValues = styleText.split("}")
+    for (const keyValue of keyValues) {
+      const kv = keyValue.split("{")
+      if (kv[0] && kv[1]) {
+        map[kv[0]] = kv[1]
+      }
+    }
+    return map
+  }
+  var noStyleSpace = (text) => text.replace(/\s*([^\w-!])\s*/gm, "$1")
+  var createSetStyle = (styleText) => {
+    const styleMap = toStyleMap(styleText)
+    return (element, value, overwrite) => {
+      if (typeof value === "object") {
+        setStyle(element, value, overwrite)
+      } else if (typeof value === "string") {
+        const key = noStyleSpace(value)
+        const value2 = styleMap[key]
+        setStyle(element, value2 || value, overwrite)
+      }
+    }
+  }
+  if (typeof Object.hasOwn !== "function") {
+    Object.hasOwn = (instance, prop) =>
+      Object.prototype.hasOwnProperty.call(instance, prop)
+  }
+
+  var style_default =
+    ".hnas_wrapper {  display: inline-block;}.hnas_wrapper > div.hnas_tooltip {  min-width: 250px;  display: none;  position: absolute;  top: 0px;  left: 0px;  box-sizing: border-box;  padding: 10px 15px;  background-color: white;  z-index: 100000;  border-radius: 5px;  -webkit-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  -moz-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);}.hnas_wrapper > div.hnas_tooltip > ul {  list-style: none;  padding: 0;  margin: 0;}.hnas_wrapper > div.hnas_tooltip > ul > li {  display: block;}.hnas_wrapper > div.hnas_tooltip > ul > li > a {  text-decoration: none;  color: black;  padding: 5px;  border-radius: 5px;  display: flex;  font-size: 1rem;  line-height: 1.25rem;}.hnas_wrapper > div.hnas_tooltip > ul > li > a:hover {  text-decoration: underline;  color: black !important;  background-color: #f3f4f6;}"
+
+  var addValueChangeListener = GM_addValueChangeListener
+
+  var apps = [
+    "https://news.ycombinator.com/item?id=1234",
+    "https://hn.svelte.dev/item/1234",
+    // https://github.com/rocktimsaikia/hackernews-redesign
+    "https://hn-redesign.vercel.app/items/1234",
+    "https://insin.github.io/react-hn/#/story/1234",
+    "https://lotusreader.netlify.app/item/1234",
+    "https://hackernewsmobile.com/#/comments/1234",
+    "https://hackerweb.app/#/item/1234",
+    "https://hn.premii.com/#/comments/1234",
+    "https://whnex.com/items/1234",
+    "https://hack.ernews.info/comments-for/1234",
+    "https://hacker-news.news/post/1234",
+    "Close",
+  ]
+  var setStyle2 = createSetStyle(style_default)
+  var tooltip = null
+  function toSiteName(url) {
+    return /\/([^/]+)\//.exec(url)[1]
+  }
+  var handler = (event) => {
+    let target = event.target
+    const tooltip2 = $(".hnas_tooltip")
+    if (tooltip2) {
+      while (target !== tooltip2 && target) {
+        target = target.parentNode
+      }
+      if (target === tooltip2) {
+        event.preventDefault()
+        return
+      }
+      tooltip2.style.display = "none"
+    }
+    document.removeEventListener("click", handler)
+  }
+  function displayTooltip(id, wrapper) {
+    if (!tooltip) {
+      tooltip = createElement("div")
+      setStyle2(tooltip, ".hnas_wrapper > div.hnas_tooltip")
+      setAttribute(tooltip, "class", "hnas_tooltip")
+      const ul = createElement("ul")
+      setStyle2(ul, ".hnas_wrapper > div.hnas_tooltip > ul")
+      for (const app of apps) {
+        const li = createElement("li")
+        setStyle2(li, "display: block;")
+        const link = createElement("a")
+        setStyle2(link, ".hnas_wrapper > div.hnas_tooltip > ul > li > a")
+        link.dataset.hnas_link = "1"
+        if (app === "Close") {
+          link.innerHTML = "Close"
+          setStyle2(link, "color: #217dfc; cursor: pointer;")
+        } else {
+          setAttribute(link, "href", app)
+          setAttribute(link, "target", "_blank")
+          link.innerHTML = toSiteName(app)
+        }
+        addEventListener(link, {
+          click(event) {
+            const tooltip2 = $(".hnas_tooltip")
+            if (tooltip2) {
+              tooltip2.style.display = "none"
+            }
+            document.removeEventListener("click", handler)
+            if (link.innerHTML === "Close") {
+              event.preventDefault()
+            }
+          },
+          mouseover() {
+            setStyle2(
+              link,
+              "text-decoration: underline; background-color: #f3f4f6; color: black !important;"
+            )
+            if (app === "Close") {
+              setStyle2(link, "color: #217dfc; cursor: pointer;")
+            }
+          },
+          mouseout() {
+            setStyle2(
+              link,
+              ".hnas_wrapper > div.hnas_tooltip > ul > li > a",
+              true
+            )
+            if (app === "Close") {
+              setStyle2(link, "color: #217dfc; cursor: pointer;")
+            }
+          },
+        })
+        li.append(link)
+        ul.append(li)
+      }
+      tooltip.append(ul)
+    }
+    if (tooltip.style.display === "block" && tooltip.parentNode === wrapper) {
+      return
+    }
+    for (const link of $$(tooltip, "ul li a")) {
+      const href = getAttribute(link, "href")
+      if (href) {
+        setAttribute(link, "href", href.replace(/\d+/, id))
+      }
+    }
+    const linkElement = wrapper.previousSibling
+    const width = linkElement.offsetWidth
+    const height = linkElement.offsetHeight
+    const top = linkElement.offsetTop
+    const left = linkElement.offsetLeft
+    wrapper.append(tooltip)
+    setStyle2(tooltip, {
+      display: "block",
+      top: top + height + "px",
+      left: left + "px",
+      width: width + "px",
+    })
+    document.removeEventListener("click", handler)
+    setTimeout(() => {
+      addEventListener(document, "click", handler)
+    }, 100)
+  }
+  function updateLinks() {
+    const links = $$(
+      'a[href^="https://news.ycombinator.com/item?id="],a[href^="http://news.ycombinator.com/item?id="]'
+    )
+    for (const link of links) {
+      if (link.dataset.hnas_binded || link.dataset.hnas_link) {
+        continue
+      }
+      link.dataset.hnas_binded = "1"
+      const wrapper = createElement("span")
+      setAttribute(wrapper, "class", "hnas_wrapper")
+      link.after(wrapper)
+      const id = /id=(\d+)/.exec(getAttribute(link, "href"))[1]
+      if (id) {
+        addEventListener(link, "click", (event) => {
+          event.preventDefault()
+          displayTooltip(id, wrapper)
+        })
+      }
+    }
+  }
+  function main() {
+    if (!document.body) {
+      return
+    }
+    setInterval(updateLinks, 1e3)
+    updateLinks()
+  }
+  main()
+})()
