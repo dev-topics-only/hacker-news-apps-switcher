@@ -1,4 +1,17 @@
-# Browser Extension Starter and Userscript Starter
+# Hacker News Apps Switcher
+
+Open Hacker News links on the favorite apps
+
+## Installation
+
+- Chrome Extension: TODO
+- Firefox Addon: TODO
+- Userscript: [https://greasyfork.org/scripts/462865-hacker-news-apps-switcher](https://greasyfork.org/scripts/462865-hacker-news-apps-switcher)
+- [Manual Installation](manual-installation.md)
+
+## Development
+
+This extension/userscript built from [Browser Extension Starter and Userscript Starter](https://github.com/PipecraftNet/browser-extension-starter)
 
 ## Features
 

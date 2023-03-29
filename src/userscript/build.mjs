@@ -49,7 +49,8 @@ for (const out of result.outputFiles) {
     text = text.replace("{" + key + "}", config[key])
   }
 
-  text = text.replace("// src/contents/style.scss", "'use strict';")
+  // Replace first one to 'use strict'
+  text = text.replace(/^\s*\/\/ (src|node_modules)\/.*$/m, "'use strict';")
   text = text.replace(/^\s*\/\/ (src|node_modules)\/.*$/gm, "")
   text = text.replace(/\\n/g, "")
   fs.writeFileSync(out.path, text)

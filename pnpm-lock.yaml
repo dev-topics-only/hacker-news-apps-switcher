@@ -7,7 +7,7 @@ specifiers:
   '@types/react': ^18.0.31
   '@types/react-dom': ^18.0.11
   browser-extension-storage: ^0.0.2
-  browser-extension-utils: ^0.0.6
+  browser-extension-utils: ^0.0.8
   esbuild: ^0.17.14
   fs-extra: ^11.1.1
   npm-run-all: ^4.1.5
@@ -20,7 +20,7 @@ specifiers:
 
 dependencies:
   browser-extension-storage: 0.0.2_react@18.2.0
-  browser-extension-utils: 0.0.6
+  browser-extension-utils: 0.0.8
   plasmo: 0.67.4_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -2864,8 +2864,8 @@ packages:
       - react
     dev: false
 
-  /browser-extension-utils/0.0.6:
-    resolution: {integrity: sha512-rnTf7WUrWWMJ2ibVHUnY/H2DZW4zEnxu14YvpZt4aFrtcVCPLLn5YaxbH8LQbPZhOD7Y9E1h49CBoFnGnCz6TQ==}
+  /browser-extension-utils/0.0.8:
+    resolution: {integrity: sha512-5lBn+S+OwE9IKqq+xJrv0jAt0owSZ5IHcmavvSs/3kC4MNhU81s8OMZ12qZwRRtx841bEsdpID4ERSi/zgTJ3A==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: false
 

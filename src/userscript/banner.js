@@ -7,7 +7,7 @@
 // @version      {version}
 // @description  {description}
 // @description:zh-CN {description:zh-CN}
-// @icon         https://www.tampermonkey.net/favicon.ico
+// @icon         https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
 // @author       {author}
 // @license      {license}
 // @match        https://*/*
