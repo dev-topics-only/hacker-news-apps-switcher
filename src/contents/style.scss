@@ -16,24 +16,21 @@
   -moz-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);
   box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);
 }
-.hnas_wrapper > div.hnas_tooltip > ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.hnas_wrapper > div.hnas_tooltip > div {
+  display: flex;
+  flex-direction: column;
 }
-.hnas_wrapper > div.hnas_tooltip > ul > li {
-  display: block;
-}
-.hnas_wrapper > div.hnas_tooltip > ul > li > a {
+.hnas_wrapper > div.hnas_tooltip > div > a {
   text-decoration: none;
   color: black;
   padding: 5px;
   border-radius: 5px;
-  display: flex;
+  border: none;
+  font-weight: normal;
   font-size: 1rem;
   line-height: 1.25rem;
 }
-.hnas_wrapper > div.hnas_tooltip > ul > li > a:hover {
+.hnas_wrapper > div.hnas_tooltip > div > a:hover {
   text-decoration: underline;
   color: black !important;
   background-color: #f3f4f6;

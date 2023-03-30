@@ -63,13 +63,11 @@ function displayTooltip(id: string, wrapper) {
     setStyle(tooltip, ".hnas_wrapper > div.hnas_tooltip")
     setAttribute(tooltip, "class", "hnas_tooltip")
 
-    const ul = createElement("ul")
-    setStyle(ul, ".hnas_wrapper > div.hnas_tooltip > ul")
+    const list = createElement("div")
+    setStyle(list, ".hnas_wrapper > div.hnas_tooltip > div")
     for (const app of apps) {
-      const li = createElement("li")
-      setStyle(li, "display: block;")
       const link = createElement("a")
-      setStyle(link, ".hnas_wrapper > div.hnas_tooltip > ul > li > a")
+      setStyle(link, ".hnas_wrapper > div.hnas_tooltip > div > a")
       link.dataset.hnas_link = "1"
       if (app === "Close") {
         link.innerHTML = "Close"
@@ -102,25 +100,24 @@ function displayTooltip(id: string, wrapper) {
           }
         },
         mouseout() {
-          setStyle(link, ".hnas_wrapper > div.hnas_tooltip > ul > li > a", true)
+          setStyle(link, ".hnas_wrapper > div.hnas_tooltip > div > a", true)
           if (app === "Close") {
             setStyle(link, "color: #217dfc; cursor: pointer;")
           }
         },
       })
 
-      li.append(link)
-      ul.append(li)
+      list.append(link)
     }
 
-    tooltip.append(ul)
+    tooltip.append(list)
   }
 
   if (tooltip.style.display === "block" && tooltip.parentNode === wrapper) {
     return
   }
 
-  for (const link of $$(tooltip, "ul li a")) {
+  for (const link of $$(tooltip, "div a")) {
     const href = getAttribute(link, "href")
     if (href) {
       setAttribute(link, "href", href.replace(/\d+/, id))
