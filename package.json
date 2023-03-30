@@ -2,7 +2,7 @@
   "name": "hacker-news-apps-switcher",
   "displayName": "Hacker News Apps Switcher",
   "displayName:zh-CN": "Hacker News 网站切换器",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Open Hacker News links on the favorite apps",
   "description:zh-CN": "选择其他 HN 网站打开 Hacker News 链接",
   "author": "Pipecraft",
