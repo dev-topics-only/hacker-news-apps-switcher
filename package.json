@@ -1,18 +1,18 @@
 {
-  "name": "my-extension",
-  "displayName": "My-Extension",
-  "displayName:zh-CN": "我的扩展",
-  "version": "0.1.0",
-  "description": "try to take over the world!",
-  "description:zh-CN": "让世界更美好！",
-  "author": "You",
+  "name": "hacker-news-apps-switcher",
+  "displayName": "Hacker News Apps Switcher",
+  "displayName:zh-CN": "Hacker News 网站切换器",
+  "version": "0.0.1",
+  "description": "Open Hacker News links on the favorite apps",
+  "description:zh-CN": "选择其他 HN 网站打开 Hacker News 链接",
+  "author": "Pipecraft",
   "namespace": "https://www.pipecraft.net/",
-  "icon": "https://www.tampermonkey.net/favicon.ico",
+  "icon": "https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/utags/browser-extension-starter/issues"
+    "url": "https://github.com/dev-topics-only/hacker-news-apps-switcher/issues"
   },
-  "homepage": "https://github.com/utags/browser-extension-starter#readme",
+  "homepage": "https://github.com/dev-topics-only/hacker-news-apps-switcher#readme",
   "scripts": {
     "p": "prettier --write .",
     "lint": "run-s lint:*",
