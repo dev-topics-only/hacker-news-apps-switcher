@@ -4,7 +4,7 @@
 // @namespace            https://www.pipecraft.net/
 // @homepage             https://github.com/dev-topics-only/hacker-news-apps-switcher#readme
 // @supportURL           https://github.com/dev-topics-only/hacker-news-apps-switcher/issues
-// @version              0.0.2
+// @version              0.0.3
 // @description          Open Hacker News links on the favorite apps
 // @description:zh-CN    选择其他 HN 网站打开 Hacker News 链接
 // @icon                 https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
@@ -24,12 +24,6 @@
 ;(() => {
   "use strict"
   var doc = document
-  var toCamelCase = function (text) {
-    return text.replace(/^([A-Z])|[\s-_](\w)/g, function (match, p1, p2) {
-      if (p2) return p2.toUpperCase()
-      return p1.toLowerCase()
-    })
-  }
   var $ = (element, selectors) =>
     typeof element === "object"
       ? element.querySelector(selectors)
@@ -54,33 +48,18 @@
   var setAttribute = (element, name, value) => element.setAttribute(name, value)
   var setStyle = (element, values, overwrite) => {
     const style = element.style
-    if (overwrite) {
-      if (typeof values === "string") {
-        style.cssText = values
-        return
-      }
-      style.cssText = ""
-    }
     if (typeof values === "string") {
-      values = toStyleKeyValues(values)
+      style.cssText = overwrite ? values : style.cssText + ";" + values
+      return
+    }
+    if (overwrite) {
+      style.cssText = ""
     }
     for (const key in values) {
       if (Object.hasOwn(values, key)) {
         style[key] = values[key].replace("!important", "")
       }
     }
-  }
-  var toStyleKeyValues = (styleText) => {
-    const result = {}
-    const keyValues = styleText.split(/\s*;\s*/)
-    for (const keyValue of keyValues) {
-      const kv = keyValue.split(/\s*:\s*/)
-      const key = toCamelCase(kv[0])
-      if (key) {
-        result[key] = kv[1]
-      }
-    }
-    return result
   }
   var toStyleMap = (styleText) => {
     styleText = noStyleSpace(styleText)
@@ -113,7 +92,7 @@
   }
 
   var style_default =
-    ".hnas_wrapper {  display: inline-block;}.hnas_wrapper > div.hnas_tooltip {  min-width: 250px;  display: none;  position: absolute;  top: 0px;  left: 0px;  box-sizing: border-box;  padding: 10px 15px;  background-color: white;  z-index: 100000;  border-radius: 5px;  -webkit-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  -moz-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);}.hnas_wrapper > div.hnas_tooltip > ul {  list-style: none;  padding: 0;  margin: 0;}.hnas_wrapper > div.hnas_tooltip > ul > li {  display: block;}.hnas_wrapper > div.hnas_tooltip > ul > li > a {  text-decoration: none;  color: black;  padding: 5px;  border-radius: 5px;  display: flex;  font-size: 1rem;  line-height: 1.25rem;}.hnas_wrapper > div.hnas_tooltip > ul > li > a:hover {  text-decoration: underline;  color: black !important;  background-color: #f3f4f6;}"
+    ".hnas_wrapper {  display: inline-block;}.hnas_wrapper > div.hnas_tooltip {  min-width: 250px;  display: none;  position: absolute;  top: 0px;  left: 0px;  box-sizing: border-box;  padding: 10px 15px;  background-color: white;  z-index: 100000;  border-radius: 5px;  -webkit-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  -moz-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);}.hnas_wrapper > div.hnas_tooltip > div {  display: flex;  flex-direction: column;}.hnas_wrapper > div.hnas_tooltip > div > a {  text-decoration: none;  color: black;  padding: 5px;  border-radius: 5px;  border: none;  font-weight: normal;  font-size: 1rem;  line-height: 1.25rem;}.hnas_wrapper > div.hnas_tooltip > div > a:hover {  text-decoration: underline;  color: black !important;  background-color: #f3f4f6;}"
 
   var addValueChangeListener = GM_addValueChangeListener
 
@@ -157,13 +136,11 @@
       tooltip = createElement("div")
       setStyle2(tooltip, ".hnas_wrapper > div.hnas_tooltip")
       setAttribute(tooltip, "class", "hnas_tooltip")
-      const ul = createElement("ul")
-      setStyle2(ul, ".hnas_wrapper > div.hnas_tooltip > ul")
+      const list = createElement("div")
+      setStyle2(list, ".hnas_wrapper > div.hnas_tooltip > div")
       for (const app of apps) {
-        const li = createElement("li")
-        setStyle2(li, "display: block;")
         const link = createElement("a")
-        setStyle2(link, ".hnas_wrapper > div.hnas_tooltip > ul > li > a")
+        setStyle2(link, ".hnas_wrapper > div.hnas_tooltip > div > a")
         link.dataset.hnas_link = "1"
         if (app === "Close") {
           link.innerHTML = "Close"
@@ -194,25 +171,20 @@
             }
           },
           mouseout() {
-            setStyle2(
-              link,
-              ".hnas_wrapper > div.hnas_tooltip > ul > li > a",
-              true
-            )
+            setStyle2(link, ".hnas_wrapper > div.hnas_tooltip > div > a", true)
             if (app === "Close") {
               setStyle2(link, "color: #217dfc; cursor: pointer;")
             }
           },
         })
-        li.append(link)
-        ul.append(li)
+        list.append(link)
       }
-      tooltip.append(ul)
+      tooltip.append(list)
     }
     if (tooltip.style.display === "block" && tooltip.parentNode === wrapper) {
       return
     }
-    for (const link of $$(tooltip, "ul li a")) {
+    for (const link of $$(tooltip, "div a")) {
       const href = getAttribute(link, "href")
       if (href) {
         setAttribute(link, "href", href.replace(/\d+/, id))
