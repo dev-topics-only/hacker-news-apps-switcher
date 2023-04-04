@@ -1,14 +1,14 @@
 // ==UserScript==
-// @name                 My-Extension
-// @name:zh-CN           我的扩展
-// @namespace            https://github.com/utags/browser-extension-starter
-// @homepage             https://github.com/utags/browser-extension-starter#readme
-// @supportURL           https://github.com/utags/browser-extension-starter/issues
-// @version              0.1.0
-// @description          try to take over the world!
-// @description:zh-CN    让世界更美好！
-// @icon                 https://www.tampermonkey.net/favicon.ico
-// @author               You
+// @name                 Hacker News Apps Switcher
+// @name:zh-CN           Hacker News 网站切换器
+// @namespace            https://www.pipecraft.net/
+// @homepage             https://github.com/dev-topics-only/hacker-news-apps-switcher#readme
+// @supportURL           https://github.com/dev-topics-only/hacker-news-apps-switcher/issues
+// @version              0.0.1
+// @description          Open Hacker News links on the favorite apps
+// @description:zh-CN    选择其他 HN 网站打开 Hacker News 链接
+// @icon                 https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
+// @author               Pipecraft
 // @license              MIT
 // @match                https://*/*
 // @match                http://*/*
