@@ -1,49 +1,79 @@
 // ==UserScript==
-// @name         Hacker News Apps Switcher
-// @name:zh-CN   Hacker News 网站切换器
-// @namespace    https://www.pipecraft.net/
-// @homepage     https://github.com/dev-topics-only/hacker-news-apps-switcher#readme
-// @supportURL   https://github.com/dev-topics-only/hacker-news-apps-switcher/issues
-// @version      0.0.3
-// @description  Open Hacker News links on the favorite apps
-// @description:zh-CN 选择其他 HN 网站打开 Hacker News 链接
-// @icon         https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
-// @author       Pipecraft
-// @license      MIT
-// @match        https://*/*
-// @match        http://*/*
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_addValueChangeListener
+// @name                 Hacker News Apps Switcher
+// @name:zh-CN           Hacker News 网站切换器
+// @namespace            https://www.pipecraft.net/
+// @homepage             https://github.com/dev-topics-only/hacker-news-apps-switcher#readme
+// @supportURL           https://github.com/dev-topics-only/hacker-news-apps-switcher/issues
+// @version              0.0.4
+// @description          Open Hacker News links on the favorite apps
+// @description:zh-CN    选择其他 HN 网站打开 Hacker News 链接
+// @icon                 https://icons.pipecraft.net/favicons/64/news.ycombinator.com/favicon.ico
+// @author               Pipecraft
+// @license              MIT
+// @match                https://*/*
+// @match                http://*/*
 // ==/UserScript==
 //
-
 ;(() => {
   "use strict"
   var doc = document
   var $ = (element, selectors) =>
-    typeof element === "object"
+    element && typeof element === "object"
       ? element.querySelector(selectors)
       : doc.querySelector(element)
   var $$ = (element, selectors) =>
-    typeof element === "object"
+    element && typeof element === "object"
       ? [...element.querySelectorAll(selectors)]
       : [...doc.querySelectorAll(element)]
-  var createElement = doc.createElement.bind(doc)
-  var addEventListener = (element, type, listener) => {
+  var createElement = (tagName, attributes) => {
+    const element = doc.createElement(tagName)
+    if (attributes) {
+      for (const name in attributes) {
+        if (Object.hasOwn(attributes, name)) {
+          const value = attributes[name]
+          if (name === "textContent") {
+            element[name] = value
+          } else if (name === "style") {
+            setStyle(element, value)
+          } else {
+            setAttribute(element, name, value)
+          }
+        }
+      }
+    }
+    return element
+  }
+  var addEventListener = (element, type, listener, options) => {
+    if (!element) {
+      return () => 0
+    }
     if (typeof type === "object") {
+      const removers = []
       for (const type1 in type) {
         if (Object.hasOwn(type, type1)) {
           element.addEventListener(type1, type[type1])
+          removers.push(() => element.removeEventListener(type1, type[type1]))
         }
       }
-    } else if (typeof type === "string" && typeof listener === "function") {
-      element.addEventListener(type, listener)
+      return () => {
+        for (const remover of removers) remover()
+      }
+    }
+    if (typeof type === "string" && typeof listener === "function") {
+      element.addEventListener(type, listener, options)
+      return () => {
+        element.removeEventListener(type, listener, options)
+      }
     }
   }
-  var getAttribute = (element, name) => element.getAttribute(name)
-  var setAttribute = (element, name, value) => element.setAttribute(name, value)
+  var getAttribute = (element, name) =>
+    element ? element.getAttribute(name) : null
+  var setAttribute = (element, name, value) =>
+    element ? element.setAttribute(name, value) : void 0
   var setStyle = (element, values, overwrite) => {
+    if (!element) {
+      return
+    }
     const style = element.style
     if (typeof values === "string") {
       style.cssText = overwrite ? values : style.cssText + ";" + values
@@ -87,16 +117,11 @@
     Object.hasOwn = (instance, prop) =>
       Object.prototype.hasOwnProperty.call(instance, prop)
   }
-
-  var style_default =
+  var content_default =
     ".hnas_wrapper {  display: inline-block;}.hnas_wrapper > div.hnas_tooltip {  min-width: 250px;  display: none;  position: absolute;  top: 0px;  left: 0px;  box-sizing: border-box;  padding: 10px 15px;  background-color: white;  z-index: 100000;  border-radius: 5px;  -webkit-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  -moz-box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);  box-shadow: 0px 10px 39px 10px rgba(62, 66, 66, 0.22);}.hnas_wrapper > div.hnas_tooltip > div {  display: flex;  flex-direction: column;}.hnas_wrapper > div.hnas_tooltip > div > a {  text-decoration: none;  color: black;  padding: 5px;  border-radius: 5px;  border: none;  font-weight: normal;  font-size: 1rem;  line-height: 1.25rem;}.hnas_wrapper > div.hnas_tooltip > div > a:hover {  text-decoration: underline;  color: black !important;  background-color: #f3f4f6;}"
-
-  var addValueChangeListener = GM_addValueChangeListener
-
   var apps = [
     "https://news.ycombinator.com/item?id=1234",
     "https://hn.svelte.dev/item/1234",
-    // https://github.com/rocktimsaikia/hackernews-redesign
     "https://hn-redesign.vercel.app/items/1234",
     "https://insin.github.io/react-hn/#/story/1234",
     "https://lotusreader.netlify.app/item/1234",
@@ -108,7 +133,7 @@
     "https://hacker-news.news/post/1234",
     "Close",
   ]
-  var setStyle2 = createSetStyle(style_default)
+  var setStyle2 = createSetStyle(content_default)
   var tooltip = null
   function toSiteName(url) {
     return /\/([^/]+)\//.exec(url)[1]
@@ -195,9 +220,9 @@
     wrapper.append(tooltip)
     setStyle2(tooltip, {
       display: "block",
-      top: top + height + "px",
-      left: left + "px",
-      width: width + "px",
+      top: String(top + height) + "px",
+      left: String(left) + "px",
+      width: String(width) + "px",
     })
     document.removeEventListener("click", handler)
     setTimeout(() => {
